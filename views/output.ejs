@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .image{
+            width: 100px;
+            height: 200px;
+            margin: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1><%= movieDetails[0].original_title %></h1>
+
+    <% for(let i=1;i<movieDetails.length;i++) {%>
+       <div class="mian-container">
+         <p><% movieDetails[i].original_title %></p>
+            <div class="container">
+                <div class="image">
+                    <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[i].poster_path %>" alt="">
+                </div>
+                <div class="details">
+                    <p><%= movieDetails[i].overview %></p>
+                </div>
+            </div>
+       </div>
+    <% } %>
+</body>
+</html>
