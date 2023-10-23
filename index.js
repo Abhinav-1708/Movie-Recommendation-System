@@ -3,9 +3,22 @@ const axios = require("axios");
 const { spawn } = require("child_process");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const csv = require('csv-parser');
+const fs = require('fs');
 
 const app = express();
+const movies = [];
+
 app.use(bodyParser.urlencoded({ extended: true }));
+
+fs.createReadStream('main_data.csv')
+    .pipe(csv())
+    .on('data', (data) => {
+        movies.push(data);
+    })
+    .on('end', () => {
+        console.log('CSV file successfully processed');
+    });
 
 let movieName = "";
 
@@ -20,6 +33,7 @@ app.get("/", (req, res) => {
 
 app.post("/", (req, res) => {
   movieName = req.body.movieName;
+  console.log(movieName);
   res.redirect("/"+movieName);
 });
 
@@ -70,3 +84,9 @@ app.get("/:movieName", async (req, res) => {
       }
     });
   });
+
+  app.get('/api/suggestions', (req, res) => {
+    const query = req.query.query.toLowerCase(); // Use toLowerCase() for case-insensitive search
+    const results = movies.filter(movie => movie.movie_title.toLowerCase().includes(query));
+    res.json(results);
+});

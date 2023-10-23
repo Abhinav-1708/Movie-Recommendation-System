@@ -1,14 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <form method="post" action="/">
-        <input type="text" name="movieName" placeholder="Eternals">
-        <button type="submit">Search</button>
-    </form>
-</body>
+
+    <style>
+     body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            height: 100vh; /* Ensure the body takes up the full height of the viewport */
+            background-image: url("https://e0.pxfuel.com/wallpapers/452/6/desktop-wallpaper-poster-movie-film-movies-posters-bollywood-movie-collage.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2); /* Adjust the alpha (opacity) value */
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            color: #fff;
+        }
+
+      #suggestionList li.selected {
+        background-color: #ccc;
+      }
+
+      #searchInput {
+        width: 300px;
+        height: 30px;
+        font-size: 16px;
+        padding: 5px;
+        border-radius: 10px;
+        align-items: center;
+      }
+
+      .input-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 100px;
+        flex-direction: column;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        color: black;
+        padding: 5px;
+        cursor: pointer;
+        width: 300px;
+        background-color: white;
+        border: 1px solid black;
+        margin-top: 1px;
+      }
+
+      li:hover{
+        background-color: #ccc;
+      }
+
+      li:first-child{
+        border-top-right-radius: 8px;
+        border-top-left-radius: 8px;
+      }
+
+      li:last-child {
+        border-bottom-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
+
+      .button-container{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 7%;
+      }
+
+      button{
+        background-color: rgba(255, 0, 0, 0.8);
+        font-size: larger;
+        width: 150px;
+        height: 50px;
+        border-radius: 20px;
+      }
+
+      button:hover{
+        background-color: rgba(255, 0, 0, 1);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+  <div class="content">
+    <div class="input-container">
+        <form method="POST" action="/">
+            <input
+            type="text"
+            id="searchInput"
+            name="movieName"
+            oninput="handleInput()"
+            placeholder="Eternals"
+          />
+          <ul id="suggestionList"></ul>
+
+          <div class="button-container">
+            <button type="submit">Enter</button>
+          </div>
+        </form>
+    
+        </div>
+  </div>
+
+    <script>
+      // autocomplete.js
+      const searchInput = document.getElementById("searchInput");
+      const suggestionsList = document.getElementById("suggestionList");
+      let selectedSuggestionIndex = -1;
+
+      searchInput.addEventListener("input", handleInput);
+      document.addEventListener("keydown", handleArrowKeys);
+
+      function handleInput() {
+        const searchTerm = searchInput.value.trim();
+
+        suggestionsList.innerHTML = "";
+        selectedSuggestionIndex = -1; // Reset selected index on input change
+
+        if (searchTerm !== "") {
+          fetch(`/api/suggestions?query=${encodeURIComponent(searchTerm)}`)
+            .then((response) => response.json())
+            .then((data) => {
+              renderSuggestions(data);
+            })
+            .catch((error) => {
+              console.error("Error fetching suggestions:", error);
+            });
+        }
+      }
+
+      function handleArrowKeys(event) {
+        const suggestions = document.querySelectorAll("#suggestionList li");
+
+        if (
+          event.key === "ArrowDown" &&
+          selectedSuggestionIndex < suggestions.length - 1
+        ) {
+          // Move down the list
+          selectedSuggestionIndex++;
+        } else if (event.key === "ArrowUp" && selectedSuggestionIndex > 0) {
+          // Move up the list
+          selectedSuggestionIndex--;
+        } else if (event.key === "Enter" && selectedSuggestionIndex !== -1) {
+          // Select the suggestion on Enter key press
+          searchInput.value = suggestions[selectedSuggestionIndex].textContent;
+          suggestionsList.innerHTML = "";
+          selectedSuggestionIndex = -1; // Reset selected index after selection
+        }
+
+        // Highlight the selected suggestion
+        suggestions.forEach((suggestion, index) => {
+          suggestion.classList.toggle(
+            "selected",
+            index === selectedSuggestionIndex
+          );
+        });
+      }
+
+      function renderSuggestions(suggestions) {
+        const uniqueSuggestions = [];
+
+        for (let i = 0; i < 5; i++) {
+          const suggestion = suggestions[i];
+
+          // Check for case-insensitive duplicates
+          const isDuplicate = uniqueSuggestions.some(
+            (existingSuggestion) =>
+              existingSuggestion.movie_title.toLowerCase() ===
+              suggestion.movie_title.toLowerCase()
+          );
+
+          if (!isDuplicate) {
+            uniqueSuggestions.push(suggestion);
+
+            const li = document.createElement("li");
+            li.textContent = suggestion.movie_title;
+
+            li.addEventListener("click", () => {
+              searchInput.value = suggestion.movie_title;
+              suggestionsList.innerHTML = "";
+            });
+
+            suggestionsList.appendChild(li);
+          }
+        }
+      }
+    </script>
+  </body>
 </html>
