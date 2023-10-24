@@ -5,37 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        .container{
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
-            height: 100vh;
-        }
 
-        .image{
-            width: 100px;
-            height: 200px;
-            margin: 15px;
-        }
+.container {
+        display: flex;
+      }
+
+      img {
+        width: 200px;
+        height: 300px;
+        border-radius: 20px;
+      }
+
+      .content {
+        margin-left: 30px;
+        margin-right: 25%;
+      }
+
+      .input-movie {
+        margin-left: 20%;
+      }
+
+      .title {
+        margin-left: 20%;
+      }
+
+      hr {
+        margin-top: 30px;
+        margin-left: 20%;
+        margin-right: 20%;
+      }
+
+      .image img {
+        width: 150px;
+        height: 200px;
+        border-radius: 20px;
+      }
+
+      .rmcd-movies-content {
+        margin-top: 30px;
+        margin-left: 20%;
+        margin-right: 20%;
+        display: flex;
+      }
+
+      .rmcd-content {
+        margin-left: 80px;
+      }
+
+ /* Add this style to your existing styles */
+
+.loading-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid red;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
     </style>
 </head>
 <body>
-    <h1><%= movieDetails[0].original_title %></h1>
 
-    <% for(let i=1;i<movieDetails.length;i++) {%>
-       <div class="mian-container">
-         <p><% movieDetails[i].original_title %></p>
-            <div class="container">
-                <div class="image">
-                    <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[i].poster_path %>" alt="">
-                </div>
-                <div class="details">
-                    <p><%= movieDetails[i].overview %></p>
-                </div>
+    <div class="input-movie">
+        <div class="title">
+          <p><%= movieDetails[0].original_title %></p>
+        </div>
+        <div class="container">
+        <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[0].poster_path %>" alt="">
+          <div class="content">
+            <p><%= movieDetails[0].overview %></p>
+            <p>Movie Rating</p>
+          </div>
+        </div>
+      </div>
+
+
+    <hr />
+
+
+
+      <% for (let i=1;i<movieDetails.length;i++){ %>
+        <div class="rmcd-movies">
+          <div class="rmcd-movies-content">
+            <div class="image">
+              <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[i].poster_path %>" alt="">
             </div>
-       </div>
-    <% } %>
+            <div class="rmcd-content">
+              <p><%= movieDetails[i].original_title %></p>
+              <p><%= movieDetails[i].overview %></p>
+              <p>Movie Rating</p>
+            </div>
+          </div>
+          <hr />
+        </div>
+     <% } %>
+      
+
+    <div class="loading-container">
+        <div class="loading"></div>
+    </div>
+
+
+    <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var loadingContainer = document.querySelector('.loading-container');
+
+        // Show loading animation when the page starts loading
+        loadingContainer.style.display = 'flex';
+
+        // Simulate an API call (replace this with your actual API call)
+        setTimeout(function () {
+            // Hide loading animation when the API call is complete
+            loadingContainer.style.display = 'none';
+        }, 3000); // Replace 3000 with the actual time your API call takes
+
+    });
+
+    </script>
+    
 </body>
 </html>
