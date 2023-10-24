@@ -118,11 +118,10 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 9999;
-        display: none;
+        background: rgba(0, 0, 0, 0.8); /* Opaque black background */
         justify-content: center;
         align-items: center;
+        z-index: 9999;
       }
 
       .loading {
@@ -142,10 +141,92 @@
           transform: rotate(360deg);
         }
       }
+
+      .header {
+        display: flex;
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        justify-content: space-between;
+        align-items: center;
+        padding: 7px;
+        height: 60px;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+      }
+
+      .proj-name {
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+      }
+
+      .info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .proj-name {
+        margin-left: 10px;
+      }
+
+      .proj-name:hover {
+        cursor: pointer;
+      }
+      .about-us {
+        color: white;
+        font-size: 20px;
+        padding: 20px;
+      }
+      .docs {
+        color: white;
+        font-size: 20px;
+        padding: 20px;
+      }
+
+      .about-us:hover {
+        cursor: pointer;
+        background-color: red;
+      }
+
+      .docs:hover {
+        cursor: pointer;
+        background-color: red;
+      }
+
+      .about {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     </style>
   </head>
 
   <body>
+    <!-- header -->
+
+    <div class="header">
+      <a href="/">
+        <div class="info">
+          <div class="logo">
+            <img src="./random.jpeg" />
+          </div>
+          <div class="proj-name">MSR</div>
+        </div>
+      </a>
+      <div class="about">
+        <a href="/aboutUs"><div class="about-us">About Us</div></a>
+        <div class="docs">Docs</div>
+      </div>
+    </div>
+
     <div class="content">
       <div class="input-container">
         <form method="POST" action="/" id="formId">
@@ -225,40 +306,42 @@
       }
 
       function renderSuggestions(suggestions) {
-  const uniqueSuggestions = [];
-  suggestionsList.innerHTML = ""; // Clear existing suggestions
+        const uniqueSuggestions = [];
+        suggestionsList.innerHTML = ""; // Clear existing suggestions
 
-  for (let i = 0; i < suggestions.length && uniqueSuggestions.length < 5; i++) {
-    const suggestion = suggestions[i];
+        for (
+          let i = 0;
+          i < suggestions.length && uniqueSuggestions.length < 5;
+          i++
+        ) {
+          const suggestion = suggestions[i];
 
-    // Check for case-insensitive duplicates
-    const isDuplicate = uniqueSuggestions.some(
-      (existingSuggestion) =>
-        existingSuggestion.movie_title.toLowerCase() ===
-        suggestion.movie_title.toLowerCase()
-    );
+          // Check for case-insensitive duplicates
+          const isDuplicate = uniqueSuggestions.some(
+            (existingSuggestion) =>
+              existingSuggestion.movie_title.toLowerCase() ===
+              suggestion.movie_title.toLowerCase()
+          );
 
-    if (!isDuplicate) {
-      uniqueSuggestions.push(suggestion);
+          if (!isDuplicate) {
+            uniqueSuggestions.push(suggestion);
 
-      const li = document.createElement("li");
-      li.textContent = suggestion.movie_title;
+            const li = document.createElement("li");
+            li.textContent = suggestion.movie_title;
 
-      li.addEventListener("click", () => {
-        searchInput.value = suggestion.movie_title;
-        suggestionsList.innerHTML = "";
+            li.addEventListener("click", () => {
+              searchInput.value = suggestion.movie_title;
+              suggestionsList.innerHTML = "";
+            });
+
+            suggestionsList.appendChild(li);
+          }
+        }
+      }
+
+      document.querySelector("#formId").addEventListener("submit", function () {
+        document.querySelector(".loading-container").style.display = "flex";
       });
-
-      suggestionsList.appendChild(li);
-    }
-  }
-}
-
-      document
-        .querySelector("#formId")
-        .addEventListener("submit", function () {
-          document.querySelector(".loading-container").style.display = "flex";
-        });
     </script>
   </body>
 </html>

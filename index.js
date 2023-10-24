@@ -3,13 +3,107 @@ const axios = require("axios");
 const { spawn } = require("child_process");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const csv = require('csv-parser');
-const fs = require('fs');
+const csv = require("csv-parser");
+const fs = require("fs");
+const socketIO = require("socket.io");
+const http = require("http");
+const path = require('path');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
 const movies = [];
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+const genres = {
+  "genres": [
+    {
+      "id": 28,
+      "name": "Action"
+    },
+    {
+      "id": 12,
+      "name": "Adventure"
+    },
+    {
+      "id": 16,
+      "name": "Animation"
+    },
+    {
+      "id": 35,
+      "name": "Comedy"
+    },
+    {
+      "id": 80,
+      "name": "Crime"
+    },
+    {
+      "id": 99,
+      "name": "Documentary"
+    },
+    {
+      "id": 18,
+      "name": "Drama"
+    },
+    {
+      "id": 10751,
+      "name": "Family"
+    },
+    {
+      "id": 14,
+      "name": "Fantasy"
+    },
+    {
+      "id": 36,
+      "name": "History"
+    },
+    {
+      "id": 27,
+      "name": "Horror"
+    },
+    {
+      "id": 10402,
+      "name": "Music"
+    },
+    {
+      "id": 9648,
+      "name": "Mystery"
+    },
+    {
+      "id": 10749,
+      "name": "Romance"
+    },
+    {
+      "id": 878,
+      "name": "Science Fiction"
+    },
+    {
+      "id": 10770,
+      "name": "TV Movie"
+    },
+    {
+      "id": 53,
+      "name": "Thriller"
+    },
+    {
+      "id": 10752,
+      "name": "War"
+    },
+    {
+      "id": 37,
+      "name": "Western"
+    }
+  ]
+}
+
+const genresMap = new Map();
+
+genres.genres.forEach(genre => {
+  genresMap.set( genre.id,genre.name);
+});
 
 fs.createReadStream('main_data.csv')
     .pipe(csv())
@@ -20,7 +114,6 @@ fs.createReadStream('main_data.csv')
         console.log('CSV file successfully processed');
     });
 
-let movieName = "";
 
 
 app.listen(3000, () => {
@@ -32,12 +125,21 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-  movieName = req.body.movieName;
-  console.log(movieName);
-  res.redirect("/"+movieName);
+  // console.log(movieName);
+  res.redirect("/"+ req.body.movieName);
+});
+
+app.get("/aboutUs", (req, res) => {
+  res.sendFile(__dirname + "/about-us.html", (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 });
 
 app.get("/:movieName", async (req, res) => {
+    const movieName = req.params.movieName;
     const child = spawn("python", ["script.py", movieName]);
   
     child.stdout.on("data", async (data) => {
@@ -73,8 +175,26 @@ app.get("/:movieName", async (req, res) => {
           );
         }
       }
+
+      console.log("Genres Map:", [...genresMap]);
+
+      console.log(movieDetails);
+
+
+      for (let i = 0; i < movieDetails.length; i++) {
+        for (let j = 0; j < movieDetails[i].genre_ids.length; j++) {
+          const genreId = movieDetails[i].genre_ids[j];
+          const genreName = genresMap.get(genreId);
+          movieDetails[i].genre_ids[j] = genreName;
+         
+        }
+      }
+      
   
       console.log(movieDetails);
+
+    
+      io.emit('apiComplete');
       res.render("output.ejs",{movieDetails:movieDetails});
     });
   
@@ -84,6 +204,9 @@ app.get("/:movieName", async (req, res) => {
       }
     });
   });
+
+
+  
 
   app.get('/api/suggestions', (req, res) => {
     const query = req.query.query.toLowerCase(); // Use toLowerCase() for case-insensitive search

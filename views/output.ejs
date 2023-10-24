@@ -5,54 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+      body {
+          margin: 0;
+          padding: 0;
+          font-family: "Arial", sans-serif;
+          position: relative;
+          height: 100vh; /* Ensure the body takes up the full height of the viewport */
+          background-image: url("https://e0.pxfuel.com/wallpapers/452/6/desktop-wallpaper-poster-movie-film-movies-posters-bollywood-movie-collage.jpg");
+          background-size: cover;
+          background-position: center;
+          background-repeat: repeat;
+        }
+  
+        body::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          /* background-color: rgba(
+            255,
+            255,
+            255,
+            0.1
+          ); Adjust the alpha (opacity) value */
+        }
+  
+        .s-movie{
+          margin-left: 20%;
+          margin-right: 20%;
+          margin-top: 5%;
+          display: flex;
+          background-color: rgba(0, 0, 0, 0.9);
+          padding: 2%;
+          border-radius: 20px;
+          border: transparent;
+        }
 
-.container {
-        display: flex;
-      }
+        .s-movie:last-child{
+          margin-bottom: 50px;
+        }
+  
+        .s-movie-image img{
+          width: 300px;
+          height: 300px;
+          float: left;
+          border-radius: 3%;
+        }
+  
+        .s-movie-content{
+          color: white;
+          margin-left: 2%;
+        }
+  
+        .s-movie-title p{
+          font-size: 30px;
+          font-weight: bold;
+          margin-top: 0px;
+        }
+  
+        .rating{
+          display: flex;
+        }
+  
+        .star{
+          width: 50px;
+          height: 50px;
+          color: aqua;
+        }
 
-      img {
-        width: 200px;
-        height: 300px;
-        border-radius: 20px;
-      }
 
-      .content {
-        margin-left: 30px;
-        margin-right: 25%;
-      }
-
-      .input-movie {
-        margin-left: 20%;
-      }
-
-      .title {
-        margin-left: 20%;
-      }
-
-      hr {
-        margin-top: 30px;
-        margin-left: 20%;
-        margin-right: 20%;
-      }
-
-      .image img {
-        width: 150px;
-        height: 200px;
-        border-radius: 20px;
-      }
-
-      .rmcd-movies-content {
-        margin-top: 30px;
-        margin-left: 20%;
-        margin-right: 20%;
-        display: flex;
-      }
-
-      .rmcd-content {
-        margin-left: 80px;
-      }
-
- /* Add this style to your existing styles */
+        .genres{
+          display: flex;
+        }
 
 .loading-container {
     display: none;
@@ -77,48 +103,160 @@
     animation: spin 1s linear infinite;
 }
 
+a{
+  text-decoration: none;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
+.header {
+        display: flex;
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        justify-content: space-between;
+        align-items: center;
+        padding: 7px;
+        height: 60px;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+      }
+
+      .proj-name {
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+      }
+
+      .info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .proj-name {
+        margin-left: 10px;
+      }
+
+      .proj-name:hover {
+        cursor: pointer;
+      }
+      .about-us {
+        color: white;
+        font-size: 20px;
+        padding: 20px;
+      }
+      .docs {
+        color: white;
+        font-size: 20px;
+        padding: 20px;
+      }
+
+      .about-us:hover {
+        cursor: pointer;
+        background-color: red;
+      }
+
+      .docs:hover {
+        cursor: pointer;
+        background-color: red;
+      }
+
+      .about {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+
+
     </style>
 </head>
 <body>
 
-    <div class="input-movie">
-        <div class="title">
-          <p><%= movieDetails[0].original_title %></p>
+
+  <!-- header -->
+
+  <div class="header">
+    <a href="/">
+      <div class="info">
+        <div class="logo">
+          <img src="./random.jpeg" />
         </div>
-        <div class="container">
-        <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[0].poster_path %>" alt="">
-          <div class="content">
-            <p><%= movieDetails[0].overview %></p>
-            <p>Movie Rating</p>
+        <div class="proj-name">MSR</div>
+      </div>
+    </a>
+    <div class="about">
+      <a href="/aboutUs"><div class="about-us">About Us</div></a>
+      <div class="docs">Docs</div>
+    </div>
+  </div>
+
+
+      <div class="s-movie">
+        <div class="s-movie-image">
+          <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[0].poster_path %>" alt="">
+        </div>
+        <div class="s-movie-content">
+          <div class="s-movie-title">
+            <p><%= movieDetails[0].original_title %></p>
+          </div>
+          <div>
+            <p><%= movieDetails[0].overview %> </p>
+            <div class="genres">
+             <p>Genres: </p>
+              <% for(let j=0;j<movieDetails[0].genre_ids.length;j++){ %>
+                <p><%= movieDetails[0].genre_ids[j] %>, </p>
+                <% } %>
+            </div>
+            <div class="rating">
+              <p>rating:<%= movieDetails[0].vote_average %></p>
+              <!-- <img src="./star-solid.svg" class="star" alt="star"> -->
+            </div>
+            <p>No of ratings:<%= movieDetails[0].vote_count %></p>
           </div>
         </div>
       </div>
 
 
-    <hr />
 
-
-
-      <% for (let i=1;i<movieDetails.length;i++){ %>
-        <div class="rmcd-movies">
-          <div class="rmcd-movies-content">
-            <div class="image">
-              <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[i].poster_path %>" alt="">
-            </div>
-            <div class="rmcd-content">
+    <% for(let i =1;i<movieDetails.length;i++){ %>
+      <a href="/<%= movieDetails[i].original_title %>" onclick="loading()">
+        <div class="s-movie">
+          <div class="s-movie-image">
+            <img src="https://image.tmdb.org/t/p/w500/<%= movieDetails[i].poster_path %>" alt="">
+          </div>
+          <div class="s-movie-content">
+            <div class="s-movie-title">
               <p><%= movieDetails[i].original_title %></p>
-              <p><%= movieDetails[i].overview %></p>
-              <p>Movie Rating</p>
+            </div>
+            <div>
+              <p><%= movieDetails[i].overview %> </p>
+              <div class="genres">
+                <p>Genres: </p>
+                 <% for(let j=0;j<movieDetails[i].genre_ids.length;j++){ %>
+                   <p><%= movieDetails[i].genre_ids[j] %>, </p>
+                   <% } %>
+               </div>
+              <div class="rating">
+                <p>rating:<%= movieDetails[i].vote_average %></p>
+                <!-- <img src="./star-solid.svg" class="star" alt="star"> -->
+              </div>
+              <p>No of ratings:<%= movieDetails[i].vote_count %></p>
             </div>
           </div>
-          <hr />
         </div>
-     <% } %>
+      </a>
+    <% } %>
       
 
     <div class="loading-container">
@@ -138,11 +276,31 @@
         setTimeout(function () {
             // Hide loading animation when the API call is complete
             loadingContainer.style.display = 'none';
-        }, 3000); // Replace 3000 with the actual time your API call takes
+        }, 1000); // Replace 3000 with the actual time your API call takes
 
     });
 
+
+    function loading(){
+      var loadingContainer = document.querySelector('.loading-container');
+
+      loadingContainer.style.display = "flex";
+
+      
+      function hideLoading() {
+            // Hide loading animation
+            loadingContainer.style.display = 'none';
+        }
+
+      var socket = io();
+
+      socket.on('apiComplete',function(){
+        hideLoading();
+      });
+    }
+
     </script>
+    
     
 </body>
 </html>
