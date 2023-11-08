@@ -177,6 +177,16 @@ a{
         align-items: center;
       }
 
+      .genre-name{
+        margin-right: 3px;
+        background-color: rgba(255, 255, 255, 0.6);
+        padding: 2px;
+        border-radius: 2px;
+      }
+
+      a{
+        text-decoration: none;
+      }
 
 
     </style>
@@ -190,9 +200,9 @@ a{
     <a href="/">
       <div class="info">
         <div class="logo">
-          <img src="./random.jpeg" />
+          <img src="./logo.png" />
         </div>
-        <div class="proj-name">MSR</div>
+        <div class="proj-name">MRS</div>
       </div>
     </a>
     <div class="about">
@@ -213,16 +223,16 @@ a{
           <div>
             <p><%= movieDetails[0].overview %> </p>
             <div class="genres">
-             <p>Genres: </p>
+             <p>Genres:</p>
               <% for(let j=0;j<movieDetails[0].genre_ids.length;j++){ %>
-                <p><%= movieDetails[0].genre_ids[j] %>, </p>
+                <p class="genre-name"><%= movieDetails[0].genre_ids[j] %></p>
                 <% } %>
             </div>
             <div class="rating">
-              <p>rating:<%= movieDetails[0].vote_average %></p>
+              <p>rating: <%= movieDetails[0].vote_average %></p>
               <!-- <img src="./star-solid.svg" class="star" alt="star"> -->
             </div>
-            <p>No of ratings:<%= movieDetails[0].vote_count %></p>
+            <p>No of ratings: <%= movieDetails[0].vote_count %></p>
           </div>
         </div>
       </div>
@@ -244,7 +254,7 @@ a{
               <div class="genres">
                 <p>Genres: </p>
                  <% for(let j=0;j<movieDetails[i].genre_ids.length;j++){ %>
-                   <p><%= movieDetails[i].genre_ids[j] %>, </p>
+                   <p class="genre-name"><%= movieDetails[i].genre_ids[j] %></p>
                    <% } %>
                </div>
               <div class="rating">

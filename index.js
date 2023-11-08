@@ -138,6 +138,15 @@ app.get("/aboutUs", (req, res) => {
   });
 });
 
+app.get('/docs', (req, res) => {
+  res.sendFile(__dirname + "/docs.html",(err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+});
+
 app.get("/:movieName", async (req, res) => {
     const movieName = req.params.movieName;
     const child = spawn("python", ["script.py", movieName]);
@@ -204,6 +213,7 @@ app.get("/:movieName", async (req, res) => {
       }
     });
   });
+
 
 
   
